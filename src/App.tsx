@@ -2,12 +2,14 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import { type Customer } from './types'
-import { CssBaseline } from '@mui/material';
+import { Button, CssBaseline } from '@mui/material';
 import { Customerlist } from './Components/CustomerList';
 import { EditCustomer } from './Components/EditCustomer';
+import { AddCustomer } from './Components/AddCustomer';
 
 function App() {
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [openAdd, setOpenAdd] = useState(false);
   const [editCustomer, setEditCustomer] = useState<Customer | null>(null);
 
   useEffect(() => {
@@ -59,6 +61,25 @@ function App() {
       .catch(error => console.error('Error:', error));
   };
 
+  const handleAdd = (customer: Omit<Customer, 'id' | '_links'>) => {
+    fetch('https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/customers', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(customer)
+    })
+      .then(response => {
+        if (response.ok) {
+          fetchCustomers();
+          setOpenAdd(false);
+        } else {
+          alert('Error adding customer');
+        }
+      })
+      .catch(error => console.error('Error:', error));
+  };
+
   const handleEditCustomer = (customer: Customer) => {
     setEditCustomer(customer);
   };
@@ -66,6 +87,13 @@ function App() {
   return (
     <>
       <CssBaseline />
+      <Button
+        variant="contained"
+        onClick={() => setOpenAdd(true)}
+        style={{ margin: '10px 0' }}
+      >
+        Add Customer
+      </Button>
       <Customerlist
         customers={customers}
         onDelete={handleDeleteCustomer}
@@ -76,6 +104,10 @@ function App() {
         onClose={() => setEditCustomer(null)}
         onSave={handleUpdate}
       />
+      <AddCustomer
+        open={openAdd}
+        onClose={() => setOpenAdd(false)}
+        onSave={handleAdd} />
     </>
 
   )
