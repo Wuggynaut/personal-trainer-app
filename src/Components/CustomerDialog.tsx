@@ -3,28 +3,29 @@ import type { Customer } from "../types"
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 
 type EditCustomerProps = {
-    customer: Customer | null;
+    customer?: Customer | null;
     open: boolean;
     onClose: () => void;
     onSave: (customer: Omit<Customer, '_links'>) => void;
 };
 
-export function EditCustomer({ customer, open, onClose, onSave }: EditCustomerProps) {
-    const [editedCustomer, setEditedCustomer] = useState({
-        id: '',
-        firstname: '',
-        lastname: '',
-        email: '',
-        phone: '',
-        streetaddress: '',
-        postcode: '',
-        city: ''
+export function CustomerDialog({ customer, open, onClose, onSave }: EditCustomerProps) {
+    const isEditMode = customer !== null && customer !== undefined;
+
+    const [formData, setFormData] = useState({
+        firstname: customer?.firstname || '',
+        lastname: customer?.lastname || '',
+        email: customer?.email || '',
+        phone: customer?.phone || '',
+        streetaddress: customer?.streetaddress || '',
+        postcode: customer?.postcode || '',
+        city: customer?.city || ''
     });
 
     useEffect(() => {
-        if (customer) {
-            setEditedCustomer({
-                id: customer.id,
+        if (open && customer) {
+            // Edit mode - populate with customer data
+            setFormData({
                 firstname: customer.firstname,
                 lastname: customer.lastname,
                 email: customer.email,
@@ -32,38 +33,64 @@ export function EditCustomer({ customer, open, onClose, onSave }: EditCustomerPr
                 streetaddress: customer.streetaddress,
                 postcode: customer.postcode,
                 city: customer.city
-            })
+            });
+        } else if (open && !customer) {
+            // Add mode - reset to empty
+            setFormData({
+                firstname: '',
+                lastname: '',
+                email: '',
+                phone: '',
+                streetaddress: '',
+                postcode: '',
+                city: ''
+            });
         }
-    }), [customer];
+    }, [open, customer]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setEditedCustomer({ ...editedCustomer, [event.target.name]: event.target.value });
+        setFormData({ ...formData, [event.target.name]: event.target.value });
     };
 
     const handleSubmit = () => {
+        if (!customer) return;
+
         const customerData = {
-            id: editedCustomer.id,
-            firstname: editedCustomer.firstname,
-            lastname: editedCustomer.lastname,
-            email: editedCustomer.email,
-            phone: editedCustomer.phone,
-            streetaddress: editedCustomer.streetaddress,
-            postcode: editedCustomer.postcode,
-            city: editedCustomer.city
+            id: customer.id,
+            firstname: formData.firstname,
+            lastname: formData.lastname,
+            email: formData.email,
+            phone: formData.phone,
+            streetaddress: formData.streetaddress,
+            postcode: formData.postcode,
+            city: formData.city
         };
         onSave(customerData);
     };
 
+    const handleClose = () => {
+        setFormData({
+            firstname: '',
+            lastname: '',
+            email: '',
+            phone: '',
+            streetaddress: '',
+            postcode: '',
+            city: ''
+        });
+        onClose();
+    };
+
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle>Edit Customer</DialogTitle>
+            <DialogTitle>{isEditMode ? 'Edit' : 'Add'} Customer</DialogTitle>
             <DialogContent>
                 <TextField
                     margin='dense'
                     name='lastname'
                     label='Last Name'
                     fullWidth
-                    value={editedCustomer.lastname}
+                    value={formData.lastname}
                     onChange={handleChange}
                 />
                 <TextField
@@ -71,7 +98,7 @@ export function EditCustomer({ customer, open, onClose, onSave }: EditCustomerPr
                     name='firstname'
                     label='First Name'
                     fullWidth
-                    value={editedCustomer.firstname}
+                    value={formData.firstname}
                     onChange={handleChange}
                 />
                 <TextField
@@ -79,7 +106,7 @@ export function EditCustomer({ customer, open, onClose, onSave }: EditCustomerPr
                     name='email'
                     label='Email'
                     fullWidth
-                    value={editedCustomer.email}
+                    value={formData.email}
                     onChange={handleChange}
                 />
                 <TextField
@@ -87,7 +114,7 @@ export function EditCustomer({ customer, open, onClose, onSave }: EditCustomerPr
                     name='phone'
                     label='Phone'
                     fullWidth
-                    value={editedCustomer.phone}
+                    value={formData.phone}
                     onChange={handleChange}
                 />
                 <TextField
@@ -95,7 +122,7 @@ export function EditCustomer({ customer, open, onClose, onSave }: EditCustomerPr
                     name='streetaddress'
                     label='Street Address'
                     fullWidth
-                    value={editedCustomer.streetaddress}
+                    value={formData.streetaddress}
                     onChange={handleChange}
                 />
                 <TextField
@@ -103,7 +130,7 @@ export function EditCustomer({ customer, open, onClose, onSave }: EditCustomerPr
                     name='postcode'
                     label='Postcode'
                     fullWidth
-                    value={editedCustomer.postcode}
+                    value={formData.postcode}
                     onChange={handleChange}
                 />
                 <TextField
@@ -111,12 +138,12 @@ export function EditCustomer({ customer, open, onClose, onSave }: EditCustomerPr
                     name='city'
                     label='City'
                     fullWidth
-                    value={editedCustomer.city}
+                    value={formData.city}
                     onChange={handleChange}
                 />
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose}>Cancel</Button>
+                <Button onClick={handleClose}>Cancel</Button>
                 <Button onClick={handleSubmit} variant="contained">Save</Button>
             </DialogActions>
         </Dialog>

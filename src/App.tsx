@@ -3,14 +3,13 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import { type Customer } from './types'
 import { Button, CssBaseline } from '@mui/material';
-import { Customerlist } from './Components/CustomerList';
-import { EditCustomer } from './Components/EditCustomer';
-import { AddCustomer } from './Components/AddCustomer';
+import { Customerlist } from './Components/Customerlist';
+import { CustomerDialog } from './Components/CustomerDialog';
 
 function App() {
   const [customers, setCustomers] = useState<Customer[]>([]);
-  const [openAdd, setOpenAdd] = useState(false);
-  const [editCustomer, setEditCustomer] = useState<Customer | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogCustomer, setDialogCustomer] = useState<Customer | null>(null);
 
   useEffect(() => {
     fetchCustomers();
@@ -53,7 +52,6 @@ function App() {
       .then(response => {
         if (response.ok) {
           fetchCustomers();
-          setEditCustomer(null);
         } else {
           alert('Error updating customer')
         }
@@ -72,7 +70,6 @@ function App() {
       .then(response => {
         if (response.ok) {
           fetchCustomers();
-          setOpenAdd(false);
         } else {
           alert('Error adding customer');
         }
@@ -81,15 +78,26 @@ function App() {
   };
 
   const handleEditCustomer = (customer: Customer) => {
-    setEditCustomer(customer);
+    setDialogCustomer(customer);
+    setIsDialogOpen(true);
   };
+
+  const handleCloseDialog = () => {
+    setDialogCustomer(null);
+    setIsDialogOpen(false);
+  }
+
+  const handleOpenAdd = () => {
+    setDialogCustomer(null);
+    setIsDialogOpen(true);
+  }
 
   return (
     <>
       <CssBaseline />
       <Button
         variant="contained"
-        onClick={() => setOpenAdd(true)}
+        onClick={handleOpenAdd}
         style={{ margin: '10px 0' }}
       >
         Add Customer
@@ -98,16 +106,20 @@ function App() {
         customers={customers}
         onDelete={handleDeleteCustomer}
         onEdit={handleEditCustomer} />
-      <EditCustomer
-        customer={editCustomer}
-        open={editCustomer !== null}
-        onClose={() => setEditCustomer(null)}
-        onSave={handleUpdate}
+
+      <CustomerDialog
+        customer={dialogCustomer}
+        open={isDialogOpen}
+        onClose={handleCloseDialog}
+        onSave={(customer) => {
+          if (dialogCustomer) {
+            handleUpdate(customer as Omit<Customer, '_links'>);
+          } else {
+            handleAdd(customer as Omit<Customer, 'id' | '_links'>);
+          }
+          handleCloseDialog();
+        }}
       />
-      <AddCustomer
-        open={openAdd}
-        onClose={() => setOpenAdd(false)}
-        onSave={handleAdd} />
     </>
 
   )
