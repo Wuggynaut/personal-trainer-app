@@ -1,30 +1,73 @@
 
 import { useEffect, useState } from 'react'
 import './App.css'
-import { type Customer } from './types'
-import { Button, CssBaseline } from '@mui/material';
-import { Customerlist } from './Components/Customerlist';
-import { CustomerDialog } from './Components/CustomerDialog';
+import { type Training, type Customer, type TrainingResponse } from './types'
+import { CssBaseline } from '@mui/material';
+import { HashRouter, Link, Route, Routes } from 'react-router-dom';
+import dayjs from 'dayjs';
+import { CustomerPage } from './pages/CustomerPage';
+import { HomePage } from './pages/HomePage';
+import { TrainingsPage } from './pages/TrainingsPage';
 
 function App() {
   const [customers, setCustomers] = useState<Customer[]>([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [dialogCustomer, setDialogCustomer] = useState<Customer | null>(null);
+  const [trainings, setTrainings] = useState<Training[]>([]);
 
   useEffect(() => {
-    fetchCustomers();
+    fetchCustomers()
+      .then(() => fetchTrainings());
   }, []);
 
-  const fetchCustomers = () => {
-    fetch('https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/customers')
-      .then(response => response.json())
-      .then(data => {
-        const customersWithId = data._embedded.customers.map((customer: any) => ({
-          id: customer._links.self.href.split('/').pop() as string, ...customer
-        }));
-        setCustomers(customersWithId);
-      })
-      .catch(error => console.error('Error fetching customers:', error))
+  const fetchCustomers = async () => {
+    try {
+      const response = await fetch('https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/customers');
+      const data = await response.json();
+
+      const customersWithId = data._embedded.customers.map((customer: any) => ({
+        ...customer, id: customer._links.self.href.split('/').pop() as string
+      }));
+
+      setCustomers(customersWithId);
+      return customersWithId;
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      return [];
+    }
+  };
+
+  const fetchTrainings = async () => {
+    try {
+      const response = await fetch('https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/trainings');
+      const data = await response.json();
+
+      const trainingsWithCustomers = await Promise.all(
+        data._embedded.trainings.map(async (training: TrainingResponse) => {
+          try {
+            const customerResponse = await fetch(training._links.customer.href);
+            const customerData = await customerResponse.json();
+
+            return {
+              ...training,
+              id: training._links.self.href.split('/').pop() as string,
+              date: dayjs(training.date),
+              customerName: customerData ? `${customerData.lastname}, ${customerData.firstname}` : 'Unknown'
+            };
+          } catch (error) {
+            console.error('Error fetching customer for training:', error);
+            return {
+              ...training,
+              id: training._links.self.href.split('/').pop() as string,
+              date: dayjs(training.date),
+              customerName: 'Unknown'
+            };
+          }
+        })
+      );
+
+      setTrainings(trainingsWithCustomers);
+    } catch (error) {
+      console.error('Error fetching trainings:', error);
+    }
   };
 
   const handleDeleteCustomer = (id: string) => {
@@ -77,49 +120,42 @@ function App() {
       .catch(error => console.error('Error:', error));
   };
 
-  const handleEditCustomer = (customer: Customer) => {
-    setDialogCustomer(customer);
-    setIsDialogOpen(true);
-  };
-
-  const handleCloseDialog = () => {
-    setDialogCustomer(null);
-    setIsDialogOpen(false);
-  }
-
-  const handleOpenAdd = () => {
-    setDialogCustomer(null);
-    setIsDialogOpen(true);
-  }
-
   return (
     <>
       <CssBaseline />
-      <Button
-        variant="contained"
-        onClick={handleOpenAdd}
-        style={{ margin: '10px 0' }}
-      >
-        Add Customer
-      </Button>
-      <Customerlist
-        customers={customers}
-        onDelete={handleDeleteCustomer}
-        onEdit={handleEditCustomer} />
+      <HashRouter>
+        <nav>
+          <Link to='/'>Home</Link>
+          <Link to='/customers'>Customers</Link>
+          <Link to='/trainings'>Trainings</Link>
+        </nav>
 
-      <CustomerDialog
-        customer={dialogCustomer}
-        open={isDialogOpen}
-        onClose={handleCloseDialog}
-        onSave={(customer) => {
-          if (dialogCustomer) {
-            handleUpdate(customer as Omit<Customer, '_links'>);
-          } else {
-            handleAdd(customer as Omit<Customer, 'id' | '_links'>);
-          }
-          handleCloseDialog();
-        }}
-      />
+        <Routes>
+          <Route
+            path="/"
+            element={<HomePage />}
+          />
+          <Route
+            path='/customers'
+            element={
+              <CustomerPage
+                customers={customers}
+                onDelete={handleDeleteCustomer}
+                onUpdate={handleUpdate}
+                onAdd={handleAdd}
+              />}
+          />
+          <Route
+            path='/trainings'
+            element={
+              <TrainingsPage
+                trainings={trainings}
+              />}
+          />
+
+        </Routes>
+      </HashRouter>
+
     </>
 
   )

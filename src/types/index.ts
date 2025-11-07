@@ -41,8 +41,10 @@ export type TrainingResponse = {
 }
 
 export type Training = {
+    id: string;
     date: Dayjs;
     duration: number;
     activity: string;
+    customerName: string;
     _links: TrainingResponse['_links'];
 }

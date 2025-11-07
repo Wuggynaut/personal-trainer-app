@@ -6,7 +6,7 @@ type EditCustomerProps = {
     customer?: Customer | null;
     open: boolean;
     onClose: () => void;
-    onSave: (customer: Omit<Customer, '_links'>) => void;
+    onSave: (customer: Omit<Customer, '_links' | 'id'> & { id?: string }) => void;
 };
 
 export function CustomerDialog({ customer, open, onClose, onSave }: EditCustomerProps) {
@@ -53,10 +53,8 @@ export function CustomerDialog({ customer, open, onClose, onSave }: EditCustomer
     };
 
     const handleSubmit = () => {
-        if (!customer) return;
-
         const customerData = {
-            id: customer.id,
+            ...(customer?.id && { id: customer.id }), // Only include id if editing
             firstname: formData.firstname,
             lastname: formData.lastname,
             email: formData.email,
@@ -66,6 +64,7 @@ export function CustomerDialog({ customer, open, onClose, onSave }: EditCustomer
             city: formData.city
         };
         onSave(customerData);
+        handleClose();
     };
 
     const handleClose = () => {
