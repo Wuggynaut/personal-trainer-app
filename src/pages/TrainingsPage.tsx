@@ -8,9 +8,10 @@ type TrainingPageProps = {
     trainings: Training[];
     customers: Customer[];
     onAdd: (training: NewTraining) => void;
+    onDelete: (id: string) => void;
 }
 
-export function TrainingsPage({ trainings, customers, onAdd }: TrainingPageProps) {
+export function TrainingsPage({ trainings, customers, onAdd, onDelete }: TrainingPageProps) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const handleCloseDialog = () => {
@@ -31,7 +32,8 @@ export function TrainingsPage({ trainings, customers, onAdd }: TrainingPageProps
                 Add Training
             </Button>
             <Trainingslist
-                trainings={trainings} />
+                trainings={trainings}
+                onDelete={onDelete} />
             <TrainingDialog
                 customers={customers}
                 open={isDialogOpen}

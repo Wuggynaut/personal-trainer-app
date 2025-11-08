@@ -1,13 +1,14 @@
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import type { Training } from "../types"
 import { Button } from "@mui/material";
-import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 type TrainingslistProps = {
     trainings: Training[];
+    onDelete: (id: string) => void;
 }
 
-export function Trainingslist({ trainings }: TrainingslistProps) {
+export function Trainingslist({ trainings, onDelete }: TrainingslistProps) {
 
     const columns: GridColDef[] = [
         {
@@ -23,14 +24,11 @@ export function Trainingslist({ trainings }: TrainingslistProps) {
         {
             field: 'actions',
             headerName: 'Actions',
-            width: 150,
+            width: 100,
             sortable: false,
-            renderCell: () => (
+            renderCell: (params) => (
                 <>
-                    <Button size='small'>
-                        <FaRegEdit />
-                    </Button>
-                    <Button size='small'>
+                    <Button size='small' onClick={() => onDelete(params.row.id)}>
                         <FaRegTrashAlt color='red' />
                     </Button>
                 </>

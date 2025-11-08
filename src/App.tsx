@@ -38,6 +38,13 @@ function App() {
   };
 
   const handleDeleteCustomer = async (id: string) => {
+    const confirmed = window.confirm(
+      'Are you sure you want to delete this customer??'
+    );
+
+    if (!confirmed) {
+      return;
+    }
     const loadingToast = toast.loading('Deleting customer...');
 
     try {
@@ -54,6 +61,7 @@ function App() {
         id: loadingToast
       });
       fetchCustomers();
+      fetchTrainings();
     } catch (error) {
       toast.error('Network error. Please try again.', {
         id: loadingToast
@@ -136,23 +144,68 @@ function App() {
     }
   };
 
-  const handleAddTraining = (training: NewTraining) => {
-    fetch('https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/trainings', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(training)
-    })
-      .then(response => {
-        if (response.ok) {
-          fetchTrainings();
-        } else {
-          alert('Error adding training');
-        }
+  const handleAddTraining = async (training: NewTraining) => {
+    const loadingToast = toast.loading('Updating customer...');
+
+    try {
+      const response = await fetch('https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/trainings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(training)
       })
-      .catch(error => console.error('Error:', error));
+      if (!response.ok) {
+        toast.error('Error adding customer', {
+          id: loadingToast
+        });
+        throw new Error('Add failed');
+      }
+      toast.success('Training added successfully!', {
+        id: loadingToast
+      });
+
+      fetchTrainings();
+
+    } catch (error) {
+      toast.error('Network error. Please try again.', {
+        id: loadingToast
+      });
+      console.error('Error:', error);
+    }
   };
+
+  const handleDeleteTraining = async (id: string) => {
+    const confirmed = window.confirm(
+      'Are you sure you want to delete this training?'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+    const loadingToast = toast.loading('Updating customer...');
+
+    try {
+      const response = await fetch(`https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/trainings/${id}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) {
+        toast.error('Error deleting training', {
+          id: loadingToast
+        });
+        throw new Error('Delete failed');
+      }
+      toast.success('Training deleted successfully!', {
+        id: loadingToast
+      });
+      fetchTrainings();
+    } catch (error) {
+      toast.error('Network error. Please try again.', {
+        id: loadingToast
+      });
+      console.error('Error:', error);
+    }
+  }
 
   const handleResetDatabase = async () => {
     const confirmed = window.confirm(
@@ -230,6 +283,7 @@ function App() {
                 trainings={trainings}
                 customers={customers}
                 onAdd={handleAddTraining}
+                onDelete={handleDeleteTraining}
               />}
           />
 
