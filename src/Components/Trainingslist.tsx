@@ -10,7 +10,10 @@ type TrainingslistProps = {
 export function Trainingslist({ trainings }: TrainingslistProps) {
 
     const columns: GridColDef[] = [
-        { field: 'customerName', headerName: 'Customer', width: 200 },
+        {
+            field: 'customer', headerName: 'Customer', width: 200,
+            valueFormatter: (value: any) => value ? `${value.lastname}, ${value.firstname}` : 'Unknown'
+        },
         {
             field: 'date', headerName: 'Date', width: 250,
             valueFormatter: (value: any) => value ? value.format('DD.MM.YYYY HH:mm') : ''
@@ -42,7 +45,7 @@ export function Trainingslist({ trainings }: TrainingslistProps) {
                 columns={columns}
                 initialState={{
                     sorting: {
-                        sortModel: [{ field: 'customerName', sort: 'asc' }]
+                        sortModel: [{ field: 'customer', sort: 'asc' }]
                     }
                 }}
                 style={{ height: 600 }}

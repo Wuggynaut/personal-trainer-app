@@ -20,7 +20,7 @@ export type Customer = {
             href: string;
         }
     }
-}
+};
 
 export type TrainingResponse = {
     id: string;
@@ -38,13 +38,20 @@ export type TrainingResponse = {
             href: string;
         }
     }
-}
+};
 
 export type Training = {
     id: string;
     date: Dayjs;
     duration: number;
     activity: string;
-    customerName: string;
+    customer: Customer;
     _links: TrainingResponse['_links'];
-}
+};
+
+export type NewTraining = {
+    date: string;
+    duration: string;
+    activity: string;
+    customer: string; // Customer URL
+};

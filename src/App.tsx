@@ -1,13 +1,14 @@
 
 import { useEffect, useState } from 'react'
 import './App.css'
-import { type Training, type Customer, type TrainingResponse } from './types'
-import { CssBaseline } from '@mui/material';
+import type { Training, Customer, NewTraining } from './types'
+import { Button, CssBaseline } from '@mui/material';
 import { HashRouter, Link, Route, Routes } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { CustomerPage } from './pages/CustomerPage';
 import { HomePage } from './pages/HomePage';
 import { TrainingsPage } from './pages/TrainingsPage';
+import toast, { Toaster } from 'react-hot-toast';
 
 function App() {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -19,6 +20,7 @@ function App() {
   }, []);
 
   const fetchCustomers = async () => {
+
     try {
       const response = await fetch('https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/customers');
       const data = await response.json();
@@ -35,89 +37,164 @@ function App() {
     }
   };
 
+  const handleDeleteCustomer = async (id: string) => {
+    const loadingToast = toast.loading('Deleting customer...');
+
+    try {
+      const response = await fetch(`https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/customers/${id}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) {
+        toast.error('Error deleting customer', {
+          id: loadingToast
+        });
+        throw new Error('Delete failed');
+      }
+      toast.success('Customer deleted successfully!', {
+        id: loadingToast
+      });
+      fetchCustomers();
+    } catch (error) {
+      toast.error('Network error. Please try again.', {
+        id: loadingToast
+      });
+      console.error('Error:', error);
+    }
+  };
+
+  const handleUpdateCustomer = async (customer: Omit<Customer, '_links'>) => {
+    const loadingToast = toast.loading('Updating customer...');
+
+    try {
+      const response = await fetch(`https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/customers/${customer.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(customer)
+      });
+      if (!response.ok) {
+        toast.error('Error updating customer', {
+          id: loadingToast
+        });
+        throw new Error('Update failed');
+      }
+      toast.success('Customer updated successfully!', {
+        id: loadingToast
+      });
+      fetchCustomers();
+    } catch (error) {
+      toast.error('Network error. Please try again.', {
+        id: loadingToast
+      });
+      console.error('Error:', error);
+    }
+  };
+
+  const handleAddCustomer = async (customer: Omit<Customer, 'id' | '_links'>) => {
+    const loadingToast = toast.loading('Updating customer...');
+    try {
+      const response = await fetch('https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/customers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(customer)
+      });
+
+      if (!response.ok) {
+        toast.error('Error adding customer', {
+          id: loadingToast
+        });
+        throw new Error('Add failed');
+      }
+      toast.success('Customer added successfully!', {
+        id: loadingToast
+      });
+      fetchCustomers();
+    } catch (error) {
+      toast.error('Network error. Please try again.', {
+        id: loadingToast
+      });
+      console.error('Error:', error);
+    }
+  };
+
   const fetchTrainings = async () => {
     try {
-      const response = await fetch('https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/trainings');
+      const response = await fetch('https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/gettrainings');
       const data = await response.json();
 
-      const trainingsWithCustomers = await Promise.all(
-        data._embedded.trainings.map(async (training: TrainingResponse) => {
-          try {
-            const customerResponse = await fetch(training._links.customer.href);
-            const customerData = await customerResponse.json();
+      const trainingsWithDates = data.map((training: any) => ({
+        ...training,
+        date: dayjs(training.date),
+      }));
 
-            return {
-              ...training,
-              id: training._links.self.href.split('/').pop() as string,
-              date: dayjs(training.date),
-              customerName: customerData ? `${customerData.lastname}, ${customerData.firstname}` : 'Unknown'
-            };
-          } catch (error) {
-            console.error('Error fetching customer for training:', error);
-            return {
-              ...training,
-              id: training._links.self.href.split('/').pop() as string,
-              date: dayjs(training.date),
-              customerName: 'Unknown'
-            };
-          }
-        })
-      );
-
-      setTrainings(trainingsWithCustomers);
+      setTrainings(trainingsWithDates);
     } catch (error) {
       console.error('Error fetching trainings:', error);
     }
   };
 
-  const handleDeleteCustomer = (id: string) => {
-    fetch(`https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/customers/${id}`, {
-      method: 'DELETE'
-    })
-      .then(response => {
-        if (response.ok) {
-          fetchCustomers();
-        } else {
-          alert('Error deleting customer');
-        }
-      })
-      .catch(error => console.error('Error:', error));
-  };
-
-  const handleUpdate = (customer: Omit<Customer, '_links'>) => {
-    fetch(`https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/customers/${customer.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(customer)
-    })
-      .then(response => {
-        if (response.ok) {
-          fetchCustomers();
-        } else {
-          alert('Error updating customer')
-        }
-      })
-      .catch(error => console.error('Error:', error));
-  };
-
-  const handleAdd = (customer: Omit<Customer, 'id' | '_links'>) => {
-    fetch('https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/customers', {
+  const handleAddTraining = (training: NewTraining) => {
+    fetch('https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/trainings', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(customer)
+      body: JSON.stringify(training)
     })
       .then(response => {
         if (response.ok) {
-          fetchCustomers();
+          fetchTrainings();
         } else {
-          alert('Error adding customer');
+          alert('Error adding training');
         }
       })
       .catch(error => console.error('Error:', error));
+  };
+
+  const handleResetDatabase = async () => {
+    const confirmed = window.confirm(
+      'Are you sure you want to reset the database?'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    const loadingToast = toast.loading('Resetting database...');
+
+    try {
+      const response = await fetch(
+        'https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/reset',
+        {
+          method: 'POST'
+        }
+      );
+
+      if (!response.ok) {
+        toast.error('Error resetting customer', {
+          id: loadingToast
+        });
+        throw new Error('Reset failed');
+      }
+
+      const message = await response.text();
+      console.log(message);
+
+      toast.success('Database reset successfully!', {
+        id: loadingToast
+      });
+
+      fetchCustomers();
+      fetchTrainings();
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Error resetting database', {
+        id: loadingToast
+      });
+    }
   };
 
   return (
@@ -128,8 +205,9 @@ function App() {
           <Link to='/'>Home</Link>
           <Link to='/customers'>Customers</Link>
           <Link to='/trainings'>Trainings</Link>
+          <Button onClick={handleResetDatabase} variant="contained" color="error">Reset Database</Button>
         </nav>
-
+        <Toaster position="top-right" />
         <Routes>
           <Route
             path="/"
@@ -141,8 +219,8 @@ function App() {
               <CustomerPage
                 customers={customers}
                 onDelete={handleDeleteCustomer}
-                onUpdate={handleUpdate}
-                onAdd={handleAdd}
+                onUpdate={handleUpdateCustomer}
+                onAdd={handleAddCustomer}
               />}
           />
           <Route
@@ -150,6 +228,8 @@ function App() {
             element={
               <TrainingsPage
                 trainings={trainings}
+                customers={customers}
+                onAdd={handleAddTraining}
               />}
           />
 

@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import type { Customer } from "../types"
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
+import './Dialog.css';
 
-type EditCustomerProps = {
+type CustomerDialogProps = {
     customer?: Customer | null;
     open: boolean;
     onClose: () => void;
     onSave: (customer: Omit<Customer, '_links' | 'id'> & { id?: string }) => void;
 };
 
-export function CustomerDialog({ customer, open, onClose, onSave }: EditCustomerProps) {
+export function CustomerDialog({ customer, open, onClose, onSave }: CustomerDialogProps) {
     const isEditMode = customer !== null && customer !== undefined;
 
     const [formData, setFormData] = useState({
@@ -83,7 +84,7 @@ export function CustomerDialog({ customer, open, onClose, onSave }: EditCustomer
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>{isEditMode ? 'Edit' : 'Add'} Customer</DialogTitle>
-            <DialogContent>
+            <DialogContent className="dialog-content">
                 <TextField
                     margin='dense'
                     name='lastname'

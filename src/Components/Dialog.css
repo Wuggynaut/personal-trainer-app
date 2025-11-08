@@ -1,0 +1,8 @@
+.dialog-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 24px;
+    min-width: 400px;
+    overflow: visible;
+}
