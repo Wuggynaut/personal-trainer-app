@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { Customer, NewTraining } from "../types"
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, MenuItem, OutlinedInput, TextField } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, MenuItem, TextField } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -55,14 +55,29 @@ export function TrainingDialog({ customers, open, onClose, onSave }: TrainingDia
             <DialogContent className="dialog-content">
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
+                        name='date'
                         label="Date"
                         value={formData.date}
                         onChange={handleDateChange}
+                        slotProps={{
+                            textField: {
+                                fullWidth: true,
+                                margin: 'dense'
+                            }
+                        }}
                     />
                 </LocalizationProvider>
-                <OutlinedInput
+                <TextField
+                    margin='dense'
+                    name='duration'
                     label="Duration"
-                    endAdornment={<InputAdornment position='end'>min</InputAdornment>}
+                    type="number"
+                    variant="outlined"
+                    slotProps={{
+                        input: {
+                            endAdornment: <InputAdornment position='end'>min</InputAdornment>
+                        }
+                    }}
                     value={formData.duration}
                     onChange={(event) => setFormData({
                         ...formData,
@@ -70,12 +85,16 @@ export function TrainingDialog({ customers, open, onClose, onSave }: TrainingDia
                     })}
                 />
                 <TextField
+                    margin='dense'
+                    name='activity'
                     label="Activity"
                     variant="outlined"
                     value={formData.activity}
                     onChange={(event) => setFormData({ ...formData, activity: event.target.value })}
                 />
                 <TextField select
+                    margin='dense'
+                    name='customer'
                     label="Customer"
                     value={formData.customerId}
                     onChange={(event) => setFormData({ ...formData, customerId: event.target.value })}>
