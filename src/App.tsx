@@ -39,7 +39,7 @@ function App() {
 
   const handleDeleteCustomer = async (id: string) => {
     const confirmed = window.confirm(
-      'Are you sure you want to delete this customer??'
+      'Are you sure you want to delete this customer?'
     );
 
     if (!confirmed) {
