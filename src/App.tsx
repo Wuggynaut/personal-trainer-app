@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react'
 import './App.css'
-import type { Training, Customer, NewTraining } from './types'
+import type { Training, Customer, NewTraining, TrainingResponse, CustomerResponse } from './types'
 import { Button, CssBaseline } from '@mui/material';
 import { HashRouter, Link, Route, Routes } from 'react-router-dom';
 import dayjs from 'dayjs';
@@ -23,9 +23,9 @@ function App() {
 
     try {
       const response = await fetch('https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/customers');
-      const data = await response.json();
+      const data: CustomerResponse = await response.json();
 
-      const customersWithId = data._embedded.customers.map((customer: any) => ({
+      const customersWithId = data._embedded.customers.map((customer) => ({
         ...customer, id: customer._links.self.href.split('/').pop() as string
       }));
 
@@ -100,7 +100,7 @@ function App() {
   };
 
   const handleAddCustomer = async (customer: Omit<Customer, 'id' | '_links'>) => {
-    const loadingToast = toast.loading('Updating customer...');
+    const loadingToast = toast.loading('Adding customer...');
     try {
       const response = await fetch('https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/customers', {
         method: 'POST',
@@ -131,9 +131,9 @@ function App() {
   const fetchTrainings = async () => {
     try {
       const response = await fetch('https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/gettrainings');
-      const data = await response.json();
+      const data: TrainingResponse[] = await response.json();
 
-      const trainingsWithDates = data.map((training: any) => ({
+      const trainingsWithDates = data.map((training) => ({
         ...training,
         date: dayjs(training.date),
       }));
@@ -145,7 +145,7 @@ function App() {
   };
 
   const handleAddTraining = async (training: NewTraining) => {
-    const loadingToast = toast.loading('Updating customer...');
+    const loadingToast = toast.loading('Adding training...');
 
     try {
       const response = await fetch('https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/trainings', {
@@ -183,7 +183,7 @@ function App() {
     if (!confirmed) {
       return;
     }
-    const loadingToast = toast.loading('Updating customer...');
+    const loadingToast = toast.loading('Deleting training...');
 
     try {
       const response = await fetch(`https://customer-rest-service-frontend-personaltrainer.2.rahtiapp.fi/api/trainings/${id}`, {

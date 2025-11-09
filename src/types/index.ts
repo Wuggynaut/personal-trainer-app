@@ -22,22 +22,18 @@ export type Customer = {
     }
 };
 
+export type CustomerResponse = {
+    _embedded: {
+        customers: Array<Omit<Customer, 'id'>>; // Customer without 'id'
+    }
+};
+
 export type TrainingResponse = {
     id: string;
     date: string;
     duration: number;
     activity: string;
-    _links: {
-        self: {
-            href: string;
-        }
-        training: {
-            href: string;
-        }
-        customer: {
-            href: string;
-        }
-    }
+    customer: Customer;
 };
 
 export type Training = {
@@ -46,7 +42,6 @@ export type Training = {
     duration: number;
     activity: string;
     customer: Customer;
-    _links: TrainingResponse['_links'];
 };
 
 export type NewTraining = {

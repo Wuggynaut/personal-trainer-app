@@ -3,7 +3,7 @@ import type { Customer, NewTraining } from "../types"
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, MenuItem, TextField } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import './Dialog.css';
 
 type TrainingDialogProps = {
@@ -54,11 +54,18 @@ export function TrainingDialog({ customers, open, onClose, onSave }: TrainingDia
             <DialogTitle>Add Training</DialogTitle>
             <DialogContent className="dialog-content">
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
+                    <DateTimePicker
                         name='date'
-                        label="Date"
+                        label="Date and Time"
                         value={formData.date}
                         onChange={handleDateChange}
+                        format="DD.MM.YYYY HH:mm"
+                        ampm={false}
+                        viewRenderers={{
+                            hours: null,
+                            minutes: null,
+                            seconds: null,
+                        }}
                         slotProps={{
                             textField: {
                                 fullWidth: true,
@@ -71,7 +78,6 @@ export function TrainingDialog({ customers, open, onClose, onSave }: TrainingDia
                     margin='dense'
                     name='duration'
                     label="Duration"
-                    type="number"
                     variant="outlined"
                     slotProps={{
                         input: {
