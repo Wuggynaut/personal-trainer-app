@@ -19,7 +19,7 @@ export function Trainingslist({ trainings, onDelete }: TrainingslistProps) {
             field: 'date', headerName: 'Date', width: 250,
             valueFormatter: (value: any) => value ? value.format('DD.MM.YYYY HH:mm') : ''
         },
-        { field: 'duration', headerName: 'Duration', width: 150 },
+        { field: 'duration', headerName: 'Duration (min)', width: 150 },
         { field: 'activity', headerName: 'Activity', width: 150 },
         {
             field: 'actions',

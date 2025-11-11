@@ -22,9 +22,11 @@ export type Customer = {
     }
 };
 
+export type CustomerExport = Omit<Customer, 'id' | '_links'>;
+
 export type CustomerResponse = {
     _embedded: {
-        customers: Array<Omit<Customer, 'id'>>; // Customer without 'id'
+        customers: Array<Omit<Customer, 'id'>>;
     }
 };
 
@@ -50,3 +52,5 @@ export type NewTraining = {
     activity: string;
     customer: string; // Customer URL
 };
+
+export type TrainingExport = NewTraining;

@@ -1,8 +1,11 @@
 import { Button } from "@mui/material";
-import type { Customer } from "../types";
+import type { Customer, CustomerExport } from "../types";
 import { CustomerDialog } from "../components/CustomerDialog";
 import { Customerlist } from "../components/Customerlist";
 import { useState } from "react";
+import { exportCSV } from "../utils/exportCSV";
+import { CgExport } from "react-icons/cg";
+import { FaPlusCircle } from "react-icons/fa";
 
 type CustomerPageProps = {
     customers: Customer[];
@@ -31,15 +34,27 @@ export function CustomerPage({ customers, onDelete, onUpdate, onAdd }: CustomerP
         setIsDialogOpen(true);
     }
 
+    const handleExport = () => {
+        const customerExport: CustomerExport[] = customers.map(({ id, _links, ...rest }) => rest)
+        exportCSV(customerExport, 'customers');
+    }
+
     return (
         <>
-            <Button
-                variant="contained"
-                onClick={handleOpenAdd}
-                style={{ margin: '10px 0' }}
-            >
-                Add Customer
-            </Button>
+            <div className="button-row">
+                <Button
+                    variant="contained"
+                    onClick={handleOpenAdd}
+                    style={{ margin: '10px 0' }}>
+                    <FaPlusCircle className="button-icon" /> Add Customer
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={handleExport}
+                    style={{ margin: '10px 0' }}>
+                    <CgExport className="button-icon" /> Export Customers
+                </Button>
+            </div>
             <Customerlist
                 customers={customers}
                 onDelete={onDelete}

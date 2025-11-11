@@ -18,7 +18,7 @@ export function Customerlist({ customers, onDelete, onEdit }: CustomerlistProps)
         { field: 'phone', headerName: 'Phone', width: 150 },
         { field: 'streetaddress', headerName: 'Street Address', width: 200 },
         { field: 'postcode', headerName: 'Postcode', width: 100 },
-        { field: 'city', headerName: 'City', width: 150 },
+        { field: 'city', headerName: 'City', width: 125 },
         {
             field: 'actions',
             headerName: 'Actions',
