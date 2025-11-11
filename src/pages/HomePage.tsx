@@ -1,8 +1,8 @@
 export function HomePage() {
     return (
-        <div>
+        <div style={{ padding: '40px', maxWidth: '800px', margin: '0 auto' }}>
             <h1>Home Page</h1>
-            <p>Welcome to the home page!</p>
+            <p>This page will have more content on it later on!</p>
         </div>
     );
 }
