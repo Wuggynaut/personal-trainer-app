@@ -9,6 +9,7 @@ import { CustomerPage } from './pages/CustomerPage';
 import { HomePage } from './pages/HomePage';
 import { TrainingsPage } from './pages/TrainingsPage';
 import toast, { Toaster } from 'react-hot-toast';
+import { CalendarPage } from './pages/CalendarPage';
 
 function App() {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -258,6 +259,7 @@ function App() {
           <Link to='/'>Home</Link>
           <Link to='/customers'>Customers</Link>
           <Link to='/trainings'>Trainings</Link>
+          <Link to='/calendar'>Training Calendar</Link>
           <Button onClick={handleResetDatabase} variant="contained" color="error">Reset Database</Button>
         </nav>
         <Toaster position="top-right" />
@@ -286,7 +288,13 @@ function App() {
                 onDelete={handleDeleteTraining}
               />}
           />
-
+          <Route
+            path='/calendar'
+            element={
+              <CalendarPage
+                trainings={trainings}
+              />}
+          />
         </Routes>
       </HashRouter>
 
