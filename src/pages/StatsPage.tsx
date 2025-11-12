@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { Training, TrainingData } from '../types';
 
 type StatsPageProps = {
@@ -24,22 +24,20 @@ export function StatsPage({ trainings }: StatsPageProps) {
     }, [] as TrainingData[]);
 
     return (
-        <BarChart
-            style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
-            responsive
-            data={collatedData}
-            margin={{
-                top: 5,
-                right: 5,
-                left: 5,
-                bottom: 5,
-            }}>
-            <CartesianGrid strokeDasharray="4 4" />
-            <XAxis dataKey="activity" />
-            <YAxis width="auto" label={{ value: 'Duration (min)', angle: -90, position: 'insideLeft' }} />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="duration" fill="#1565c0" />
-        </BarChart>
+        <div className="stats-container">
+            <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                    data={collatedData}
+                >
+                    <CartesianGrid strokeDasharray="4 4" />
+                    <XAxis dataKey="activity" />
+                    <YAxis width="auto" label={{ value: 'Duration (min)', angle: -90, position: 'insideLeft' }} />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="duration" fill="#1565c0" isAnimationActive={false} />
+                </BarChart>
+            </ResponsiveContainer>
+        </div>
+
     )
 }

@@ -40,3 +40,9 @@
 .fc {
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 }
+
+.calendar-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}

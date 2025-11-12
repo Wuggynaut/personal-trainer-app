@@ -12,17 +12,19 @@ type CustomerlistProps = {
 export function Customerlist({ customers, onDelete, onEdit }: CustomerlistProps) {
 
     const columns: GridColDef[] = [
-        { field: 'lastname', headerName: 'Last Name', width: 150 },
-        { field: 'firstname', headerName: 'First Name', width: 150 },
-        { field: 'email', headerName: 'Email', width: 200 },
-        { field: 'phone', headerName: 'Phone', width: 150 },
-        { field: 'streetaddress', headerName: 'Street Address', width: 200 },
-        { field: 'postcode', headerName: 'Postcode', width: 100 },
-        { field: 'city', headerName: 'City', width: 125 },
+        { field: 'lastname', headerName: 'Last Name', flex: 2, minWidth: 150, cellClassName: 'wrap-cell' },
+        { field: 'firstname', headerName: 'First Name', flex: 2, minWidth: 100, cellClassName: 'wrap-cell' },
+        { field: 'email', headerName: 'Email', flex: 3, minWidth: 175, cellClassName: 'wrap-cell' },
+        { field: 'phone', headerName: 'Phone', flex: 2, minWidth: 150, cellClassName: 'wrap-cell' },
+        { field: 'streetaddress', headerName: 'Street Address', flex: 2, minWidth: 150, cellClassName: 'wrap-cell' },
+        { field: 'postcode', headerName: 'Postcode', flex: 1, minWidth: 100, cellClassName: 'wrap-cell' },
+        { field: 'city', headerName: 'City', flex: 1, minWidth: 100, cellClassName: 'wrap-cell' },
         {
             field: 'actions',
             headerName: 'Actions',
-            width: 150,
+            flex: 2.5,
+            cellClassName: 'wrap-cell',
+            minWidth: 150,
             sortable: false,
             renderCell: (params) => (
                 <>
@@ -39,15 +41,18 @@ export function Customerlist({ customers, onDelete, onEdit }: CustomerlistProps)
     ];
 
     return (
-        <DataGrid
-            rows={customers}
-            columns={columns}
-            initialState={{
-                sorting: {
-                    sortModel: [{ field: 'lastname', sort: 'asc' }]
-                },
-            }}
-        />
+        <div className="datagrid-container wide">
+            <DataGrid
+                rows={customers}
+                columns={columns}
+                initialState={{
+                    sorting: {
+                        sortModel: [{ field: 'lastname', sort: 'asc' }]
+                    },
+                }}
+                getRowHeight={() => 'auto'}
+            />
+        </div>
     );
 
 }

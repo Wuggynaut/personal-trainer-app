@@ -20,3 +20,29 @@ nav a {
 .button-icon {
     margin-right: 8px;
 }
+
+.datagrid-container {
+    height: 70vh;
+    width: 100%;
+    max-width: 800px;
+    margin: auto;
+}
+
+.wide {
+    max-width: 1200px;
+}
+
+.wrap-cell {
+    white-space: normal !important;
+    word-wrap: break-word;
+    line-height: 1.5;
+    padding: 12px 8px !important;
+}
+
+.stats-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    max-Height: 70vh;
+    aspect-ratio: 1.618;
+}

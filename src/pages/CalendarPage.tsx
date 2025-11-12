@@ -16,31 +16,39 @@ export function CalendarPage({ trainings }: CalendarPageProps) {
     }));
 
     return (
-        <FullCalendar
-            plugins={[dayGridPlugin, timeGridPlugin]}
-            initialView="dayGridMonth"
-            headerToolbar={{
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            }}
-            slotLabelFormat={{
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            }}
-            eventTimeFormat={{
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            }}
-            displayEventTime={false}
-            slotMinTime="06:00:00"
-            slotMaxTime="22:00:00"
-            events={events}
-            height="auto"
-            eventDisplay="block"
-            dayMaxEvents={true}
-        />
+        <div className='calendar-container'>
+            <FullCalendar
+                plugins={[dayGridPlugin, timeGridPlugin]}
+                initialView="dayGridMonth"
+                headerToolbar={{
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                }}
+                slotLabelFormat={{
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                }}
+                eventTimeFormat={{
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                }}
+                displayEventTime={false}
+                slotMinTime="06:00:00"
+                slotMaxTime="22:00:00"
+                events={events}
+
+                eventDisplay="block"
+                dayMaxEvents={true}
+
+                height="auto" // Makes calendar height responsive
+                contentHeight="auto"
+                aspectRatio={1.5} // Width-to-height ratio
+                handleWindowResize={true} // Automatically responds to window resize
+                windowResizeDelay={200} // Debounce time in ms
+            />
+        </div>
     )
 }

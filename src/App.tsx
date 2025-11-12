@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import type { Training, Customer, NewTraining, TrainingResponse, CustomerResponse } from './types'
-import { Button, CssBaseline } from '@mui/material';
+import { AppBar, Box, Button, CssBaseline, IconButton, Menu, MenuItem, Toolbar, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { HashRouter, Link, Route, Routes } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { CustomerPage } from './pages/CustomerPage';
@@ -11,6 +11,7 @@ import { TrainingsPage } from './pages/TrainingsPage';
 import toast, { Toaster } from 'react-hot-toast';
 import { CalendarPage } from './pages/CalendarPage';
 import { StatsPage } from './pages/StatsPage';
+import { CgMenu } from 'react-icons/cg';
 
 function App() {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -252,18 +253,109 @@ function App() {
     }
   };
 
+  const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElement(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorElement(null);
+  };
+
+  // Navigation items array for easier management
+  const navItems = [
+    { label: 'Home', path: '/' },
+    { label: 'Customers', path: '/customers' },
+    { label: 'Trainings', path: '/trainings' },
+    { label: 'Training Calendar', path: '/calendar' },
+    { label: 'Stats', path: '/stats' },
+  ];
+
   return (
     <>
       <CssBaseline />
       <HashRouter>
-        <nav>
-          <Link to='/'>Home</Link>
-          <Link to='/customers'>Customers</Link>
-          <Link to='/trainings'>Trainings</Link>
-          <Link to='/calendar'>Training Calendar</Link>
-          <Link to='/stats'>Stats</Link>
-          <Button onClick={handleResetDatabase} variant="contained" color="error">Reset Database</Button>
-        </nav>
+        <AppBar position='static' sx={{ marginBottom: '10px' }}>
+          <Toolbar>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Training App
+            </Typography>
+
+            {isMobile ? (
+              <>
+                <IconButton
+                  color="inherit"
+                  edge="end"
+                  onClick={handleMenuOpen}
+                >
+                  <CgMenu />
+                </IconButton>
+
+                <Menu
+                  anchorEl={anchorElement}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={Boolean(anchorElement)}
+                  onClose={handleMenuClose}
+                >
+                  {navItems.map((item) => (
+                    <MenuItem
+                      key={item.path}
+                      component={Link}
+                      to={item.path}
+                      onClick={handleMenuClose}
+                    >
+                      {item.label}
+                    </MenuItem>
+                  ))}
+
+                  <MenuItem
+                    onClick={() => {
+                      handleMenuClose();
+                      handleResetDatabase();
+                    }}
+                    sx={{ color: 'error.main' }}
+                  >
+                    Reset Database
+                  </MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                {navItems.map((item) => (
+                  <Button
+                    key={item.path}
+                    color="inherit"
+                    component={Link}
+                    to={item.path}
+                  >
+                    {item.label}
+                  </Button>
+                ))}
+
+                <Button
+                  onClick={handleResetDatabase}
+                  variant="contained"
+                  color="error"
+                >
+                  Reset Database
+                </Button>
+              </Box>
+            )}
+          </Toolbar>
+        </AppBar>
+
+
         <Toaster position="top-right" />
         <Routes>
           <Route

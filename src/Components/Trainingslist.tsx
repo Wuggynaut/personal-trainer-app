@@ -12,19 +12,21 @@ export function Trainingslist({ trainings, onDelete }: TrainingslistProps) {
 
     const columns: GridColDef[] = [
         {
-            field: 'customer', headerName: 'Customer', width: 200,
+            field: 'customer', headerName: 'Customer', flex: 3, minWidth: 150, cellClassName: 'wrap-cell',
             valueFormatter: (value: any) => value ? `${value.lastname}, ${value.firstname}` : 'Unknown'
         },
         {
-            field: 'date', headerName: 'Date', width: 250,
+            field: 'date', headerName: 'Date', flex: 3, minWidth: 150, cellClassName: 'wrap-cell',
             valueFormatter: (value: any) => value ? value.format('DD.MM.YYYY HH:mm') : ''
         },
-        { field: 'duration', headerName: 'Duration (min)', width: 150 },
-        { field: 'activity', headerName: 'Activity', width: 150 },
+        { field: 'duration', headerName: 'Duration (min)', flex: 2, minWidth: 150, cellClassName: 'wrap-cell' },
+        { field: 'activity', headerName: 'Activity', flex: 2, minWidth: 150, cellClassName: 'wrap-cell' },
         {
             field: 'actions',
             headerName: 'Actions',
-            width: 100,
+            flex: 1,
+            minWidth: 100,
+            cellClassName: 'wrap-cell',
             sortable: false,
             renderCell: (params) => (
                 <>
@@ -37,7 +39,7 @@ export function Trainingslist({ trainings, onDelete }: TrainingslistProps) {
     ]
 
     return (
-        <>
+        <div className="datagrid-container" >
             <DataGrid
                 rows={trainings}
                 columns={columns}
@@ -46,8 +48,8 @@ export function Trainingslist({ trainings, onDelete }: TrainingslistProps) {
                         sortModel: [{ field: 'customer', sort: 'asc' }]
                     }
                 }}
-                style={{ height: 600 }}
+                getRowHeight={() => 'auto'}
             />
-        </>
+        </div>
     )
 }
