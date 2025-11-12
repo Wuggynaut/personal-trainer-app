@@ -43,11 +43,12 @@ export function CalendarPage({ trainings }: CalendarPageProps) {
                 eventDisplay="block"
                 dayMaxEvents={true}
 
-                height="auto" // Makes calendar height responsive
+                height="auto"
                 contentHeight="auto"
-                aspectRatio={1.5} // Width-to-height ratio
-                handleWindowResize={true} // Automatically responds to window resize
-                windowResizeDelay={200} // Debounce time in ms
+                aspectRatio={1.5}
+                handleWindowResize={true}
+                windowResizeDelay={200}
+                firstDay={1}
             />
         </div>
     )

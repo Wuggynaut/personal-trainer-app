@@ -46,3 +46,9 @@ nav a {
     max-Height: 70vh;
     aspect-ratio: 1.618;
 }
+
+.home-container {
+    padding: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+}

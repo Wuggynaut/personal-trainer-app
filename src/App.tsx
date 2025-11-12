@@ -281,7 +281,7 @@ function App() {
         <AppBar position='static' sx={{ marginBottom: '10px' }}>
           <Toolbar>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Training App
+              <strong>Training App</strong>
             </Typography>
 
             {isMobile ? (
