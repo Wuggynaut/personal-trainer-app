@@ -54,3 +54,5 @@ export type NewTraining = {
 };
 
 export type TrainingExport = NewTraining;
+
+export type TrainingData = Omit<Training, 'id' | 'date' | 'customer'>;

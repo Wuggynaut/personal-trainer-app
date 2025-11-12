@@ -2,7 +2,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import type { Training } from "../types";
-import './TrainingCalendar.css';
+import './Calendar.css';
 
 type CalendarPageProps = {
     trainings: Training[];

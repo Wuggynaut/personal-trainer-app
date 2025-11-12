@@ -10,6 +10,7 @@ import { HomePage } from './pages/HomePage';
 import { TrainingsPage } from './pages/TrainingsPage';
 import toast, { Toaster } from 'react-hot-toast';
 import { CalendarPage } from './pages/CalendarPage';
+import { StatsPage } from './pages/StatsPage';
 
 function App() {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -260,6 +261,7 @@ function App() {
           <Link to='/customers'>Customers</Link>
           <Link to='/trainings'>Trainings</Link>
           <Link to='/calendar'>Training Calendar</Link>
+          <Link to='/stats'>Stats</Link>
           <Button onClick={handleResetDatabase} variant="contained" color="error">Reset Database</Button>
         </nav>
         <Toaster position="top-right" />
@@ -292,6 +294,13 @@ function App() {
             path='/calendar'
             element={
               <CalendarPage
+                trainings={trainings}
+              />}
+          />
+          <Route
+            path='/stats'
+            element={
+              <StatsPage
                 trainings={trainings}
               />}
           />
